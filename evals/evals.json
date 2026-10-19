@@ -1,0 +1,23 @@
+{
+  "skill_name": "paper-review",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Can you review this paper for me? I'm presenting it at our reading group next week and want to know how much to trust the claims. PDF is at ./dpo.pdf",
+      "expected_output": "A four-section review (Overview, Champion, Adversary, Final Synthesis) grounded in specific tables/figures, with [paper]/[web] labels on venue/affiliation/history, a verdict and confidence, a 15-minute reading plan, and one guiding question.",
+      "files": ["dpo.pdf"]
+    },
+    {
+      "id": 2,
+      "prompt": "https://arxiv.org/abs/2305.18290 — is this worth reading or is it overhyped? give me the steelman and the reviewer-2 take",
+      "expected_output": "Same four-section format; resolves the arXiv link to the PDF, verifies NeurIPS 2023 status by web search, and keeps Champion and Adversary anchored to the same claims.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I'm an area chair and have a borderline submission. Here's the PDF (./submission.pdf). I don't need a summary, I need to know whether the main claim actually survives scrutiny and what one experiment would settle it.",
+      "expected_output": "Full review with an Adversary section that identifies the central claim, assesses it via construct/internal/external validity with severities, and names the smallest decisive experiment; verdict calibrated to the severity scale.",
+      "files": ["submission.pdf"]
+    }
+  ]
+}
