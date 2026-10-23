@@ -4,3 +4,4 @@ __pycache__/
 *.pdf
 *.pptx
 *.plan.json
+*_slide_plan*.md
