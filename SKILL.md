@@ -165,7 +165,7 @@ Keep the four sections stable; add these only when asked, as a short reply or an
   accept. Stay substantive: no cosmetic complaints.
 - **"I'm the adversary / champion / presenting this."** The review still has all four sections;
   summarise the side they need in chat and point them to the `paper-presentation` skill, whose
-  adversary and balanced modes build slides from the Adversary section and the claim ledger.
+  champion, adversary, and presenter modes build slides from this review's sections.
 
 ## Scope notes
 
