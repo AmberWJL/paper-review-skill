@@ -30,6 +30,9 @@ VENUE_PAT = re.compile(
     re.I,
 )
 NUM_HEADING_PAT = re.compile(r"^\s*(\d{1,2}(?:\.\d{1,2}){0,2})\.?\s+(.+)$")
+ROMAN = r"(?:X{0,2}(?:IX|IV|V?I{0,3}))"
+ROMAN_HEADING_PAT = re.compile(r"^\s*(" + ROMAN + r")\.\s+([A-Z].+)$")           # IEEE: "IV. STAGE 2: ..."
+ROMAN_SUB_PAT = re.compile(r"^\s*([A-H])\.\s+([A-Z][^.]{2,80})$")                   # IEEE: "A. Research Method"
 LETTER_HEADING_PAT = re.compile(r"^\s*([A-H](?:\.\d{1,2}){0,2})\.?\s+(.+)$")
 BARE_NUM_PAT = re.compile(r"^\s*(\d{1,2}(?:\.\d{1,2}){0,2})\.?\s*$")
 BARE_LETTER_PAT = re.compile(r"^\s*([A-H](?:\.\d{1,2}){0,2})\.?\s*$")
@@ -40,12 +43,13 @@ NAMED_SECTION_PAT = re.compile(
     r"References|Appendix|Appendices|Supplementary Material)\s*$",
     re.I,
 )
-FIG_PAT = re.compile(r"^\s*(?:Figure|Fig\.)\s*(\d+)\s*[.:|]\s*(.*)$")
+FIG_PAT = re.compile(r"^\s*(?:Figure|Fig\.?)[\s\u00a0]*(\d+)\s*[.:|]\s*(.*)$")
 TAB_PAT = re.compile(r"^\s*Table\s*(\d+)\s*[.:|]\s*(.*)$")
+TAB_ROMAN_PAT = re.compile(r"^\s*TABLE\s+(" + ROMAN + r")\s*[.:]?\s*(.*)$")        # IEEE: "TABLE IV" (caption on next line)
 ALG_PAT = re.compile(r"^\s*Algorithm\s*(\d+)\s*[.:|]?\s*(.*)$")
 THM_PAT = re.compile(r"^\s*((?:Theorem|Lemma|Proposition|Corollary|Definition|Assumption)\s*\d+(?:\.\d+)*)\s*[.:(]?\s*(.*)$")
 # Two-column layouts can put a caption mid-line; only trust a colon there ("Table 1: ...").
-FIG_INLINE_PAT = re.compile(r"(?:Figure|Fig\.)\s*(\d+)\s*:\s*(.*)$")
+FIG_INLINE_PAT = re.compile(r"(?:Figure|Fig\.?)[\s\u00a0]*(\d+)\s*[.:]\s+([A-Z].*)$")
 TAB_INLINE_PAT = re.compile(r"Table\s*(\d+)\s*:\s*(.*)$")
 EQ_PAT = re.compile(r"\((\d{1,3})\)\s*$")
 ARXIV_PAT = re.compile(r"arXiv:\s*(\d{4}\.\d{4,5})(v\d+)?", re.I)
@@ -75,11 +79,14 @@ def extract_pages(pdf: Path) -> list[str]:
 def title_like(ln: str) -> bool:
     """A heading: short, starts with a capital, no sentence punctuation at the end."""
     ln = ln.strip()
+    words = ln.split()
+    alpha_words = [w for w in words if re.fullmatch(r"[A-Za-z][A-Za-z'’-]{2,}", w)]
     return (
         3 <= len(ln) <= 90
         and ln[0].isupper()
         and not ln.endswith((".", ",", ";", ":"))
-        and len(ln.split()) <= 12
+        and len(words) <= 12
+        and (len(alpha_words) >= 2 or (len(words) == 1 and len(ln) >= 6 and ln.isalpha()))
     )
 
 
@@ -91,6 +98,15 @@ def normalize_heading(ln: str) -> str:
     if ln == ln.upper() and any(c.isalpha() for c in ln):
         return SMALLCAPS_GAP.sub(r"\1", ln)
     return ln
+
+
+def roman_to_int(r: str) -> int:
+    vals = {"I": 1, "V": 5, "X": 10}
+    total = 0
+    for i, c in enumerate(r):
+        v = vals[c]
+        total += -v if i + 1 < len(r) and vals[r[i + 1]] > v else v
+    return total
 
 
 def next_nonempty(lines: list[str], i: int, max_skip: int = 3) -> tuple[int, str]:
@@ -132,7 +148,8 @@ def build_map(pages: list[str]) -> dict:
         cap = cap.strip()
         if len(cap) < 40:
             _, nxt = next_nonempty(lines, i, 1)
-            cap = (cap + " " + nxt).strip()
+            if nxt and nxt != cap:
+                cap = (cap + " " + nxt).strip()
         info[store].append({"n": int(n), "page": pno, "caption": cap[:160]})
 
     def add_section(pno: int, number: str, title: str, numeric: bool) -> None:
@@ -179,6 +196,14 @@ def build_map(pages: list[str]) -> dict:
                 info["availability_statements"].append({"page": pno, "text": ln[:200]})
 
             # --- headings ---
+            m = ROMAN_HEADING_PAT.match(ln)
+            if m and title_like(m.group(2)) and (info["references_page"] is None or pno <= info["references_page"]):
+                add_section(pno, str(roman_to_int(m.group(1))), m.group(2).strip(), numeric=True)
+                continue
+            m = ROMAN_SUB_PAT.match(ln)
+            if m and title_like(m.group(2)) and info["references_page"] is None and last_top:
+                info["sections"].append({"page": pno, "title": f"{last_top}.{m.group(1)} {m.group(2).strip()}"})
+                continue
             m = NAMED_SECTION_PAT.match(ln)
             if m:
                 low = ln.lower()
@@ -216,6 +241,10 @@ def build_map(pages: list[str]) -> dict:
                                     add_section(pno, m.group(1), nxt, numeric=False)
 
             # --- captions ---
+            m = TAB_ROMAN_PAT.match(ln)
+            if m:
+                _, cap = next_nonempty(lines, i, 1)
+                add_caption("tables", str(roman_to_int(m.group(1))), cap or m.group(2), lines, i, pno)
             for pat, inline, store in (
                 (FIG_PAT, FIG_INLINE_PAT, "figures"),
                 (TAB_PAT, TAB_INLINE_PAT, "tables"),

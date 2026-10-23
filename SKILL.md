@@ -33,7 +33,8 @@ pages yourself, including the figure and table images when the renderer makes th
 
 Search for: venue and year (preprint vs. accepted, which version), publication status, author
 affiliations, the prior work the paper positions itself against, and any follow-ups or known
-criticisms. Two or three searches are usually enough. Mark every fact from the PDF as `[paper]` and every
+criticisms. Two or three searches are usually enough, and they belong in the same turn as the
+review: run them, then write. Stopping after the searches leaves the user with nothing. Mark every fact from the PDF as `[paper]` and every
 fact you confirmed by search as `[web]`; readers must be able to tell the difference, and the
 paper itself may misdescribe its own status. Background you know but did not confirm this
 session is neither: write it with "(unverified)" rather than borrowing the `[web]` tag. If search is unavailable, say so and label
@@ -84,7 +85,12 @@ closest comparison that isolates a component and say so; if nothing isolates the
 say that in one sentence, since it is Adversary material. End with "Strongest reason to accept".
 
 **3. Adversary.** Act as a demanding senior reviewer. Start from the major claims: what evidence
-would be required, what is provided, what assumptions connect them. Organize criticisms by
+would be required, what is provided, what assumptions connect them. First check the title and
+abstract against the dependent variable: when the promised construct (retention, quality,
+productivity, long-term outcomes) is never measured, that is the lead objection. For
+observational and mining-software-repositories papers read the matching section of
+`references/validity-threats.md`; the confounds there (group composition, outcome-defined groups,
+post-outcome predictors, huge-N significance) carried a recent review. Organize criticisms by
 construct, internal, and external validity (see `references/validity-threats.md`). For each
 criticism give Concern, Evidence from the paper, Why it matters, Severity, and What would
 resolve it. Prefer 2-4 deep criticisms over a checklist. End with "Strongest reason to reject",
@@ -111,7 +117,10 @@ and confidence, a 15-minute reading plan, and the one question to keep in mind w
    so the main claim is unsupported" is.
 7. Ground everything in specific sections, figures, tables, equations, experiments. Never
    invent a location: if you are unsure whether it was Table 3 or Table 4, say "the main
-   results table (Section 5)".
+   results table (Section 5)". Before repeating a superlative ("strongest", "in every model",
+   "all eight") verify it row by row in the cited table, and check whether a number counts
+   entities (contributors, projects) or observations (patches, PRs); both have been wrong on a
+   first draft.
 8. Separate evidence from interpretation. "Table 2 shows +3.1 on GSM8K" is evidence; "this
    suggests the gain comes from the reward model" is interpretation. Write them as such.
 9. Separate `[paper]` from `[web]`.
@@ -140,6 +149,23 @@ Reject: central claim contradicted by the paper's own evidence or fundamentally 
 unambiguous. Medium: some tables/appendices were unreadable or the subfield's norms are
 uncertain. Low: key material missing (no appendix, no code, figures unreadable) or outside
 your expertise.
+
+## On request, after the review
+
+Keep the four sections stable; add these only when asked, as a short reply or an appendix.
+
+- **"In simple words / what are we arguing?"** Restate each major objection as three plain
+  sentences: what the authors claim, what was actually measured or compared, why the gap matters.
+  Say what "hurts" or "significant" means in the paper's own units (acceptance odds, odds ratio).
+- **"How would you do the study?" / "be a picky, mean reviewer."** Add *Redesign and
+  overstatements*: (a) the design you would run, one paragraph per change (outcome that matches
+  the title, unit of analysis, controls, pre-registered effect threshold, causal lever if any);
+  (b) a bullet per overstatement quoting the paper's phrase and the table or definition that
+  contradicts it; (c) the verdict that reviewer would give and the reframing that would earn an
+  accept. Stay substantive: no cosmetic complaints.
+- **"I'm the adversary / champion / presenting this."** The review still has all four sections;
+  summarise the side they need in chat and point them to the `paper-presentation` skill, whose
+  adversary and balanced modes build slides from the Adversary section and the claim ledger.
 
 ## Scope notes
 

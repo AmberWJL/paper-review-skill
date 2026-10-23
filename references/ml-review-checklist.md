@@ -16,6 +16,7 @@ or a nice-to-have. Match the paper to the closest row; combine rows for hybrid p
 | Interpretability / analysis | A null or random baseline for the claimed structure; alternative hypothesis | Causal intervention (ablate/patch), not just correlation; multiple models/layers | Correlational evidence presented as mechanism; cherry-picked examples |
 | Theory with experiments | Assumptions stated and checked empirically where possible | Does the experiment test the regime the theorem covers? | Theorem assumptions never hold in the experiments; bound is vacuous |
 | Systems / ML infrastructure | Production-grade prior system; well-tuned baseline configuration | Breakdown of where time/memory goes; scaling across hardware; end-to-end not microbenchmark | Comparing to an unoptimized baseline; benchmarking only the fast path |
+| Empirical SE / MSR regression study (acceptance, defects, retention) | Null model and a model with controls only (tenure, size, activity); within-person or matched comparison when groups are compared | Effect sizes with CIs, explained deviance per predictor, project/author random effects, sensitivity to the group definition, abandonment vs rejection split | Significance from huge N; outcome-defined groups; post-outcome predictors; title promises a construct the dependent variable does not measure |
 | Safety / robustness / security | Adaptive attacker or strongest known attack; undefended baseline | Attack-success vs utility trade-off; transfer across models | Static attacks only; defense evaluated against attacks it was designed for |
 
 ## Cross-cutting expectations (recent ML venues)
@@ -28,5 +29,10 @@ or a nice-to-have. Match the paper to the closest row; combine rows for hybrid p
   threats cannot be ruled out.
 - **Limitations section:** does it acknowledge the issues you found? Credit the authors when it
   does; the issue still counts, but honesty about scope lowers severity for external validity.
+- **Title vs dependent variable:** read the title, abstract, and conclusion, then find the dependent variable. If the
+  claimed construct is not measured, say so first; it is the most common Major finding in observational papers.
+- **Superlatives and counts:** before repeating "strongest", "every", "all", or "most", verify it row by row in
+  the table it cites, and check whether a number counts entities (contributors, projects) or observations (patches,
+  PRs). Both were wrong on first draft in a past review.
 - **Dates matter:** judge novelty against what was public at the paper's submission date
   (`[web]`), not against today.

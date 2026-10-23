@@ -50,3 +50,26 @@ the setting in which the claim has actually been demonstrated?*
   enough that noise is a credible explanation.
 - "Would be nice to see X" with no path from X to overturning a claim is **Minor** and usually
   not worth a bullet.
+
+## Observational / mining-software-repositories (MSR) studies
+
+Regression-on-repository-data papers (acceptance, defects, retention, productivity) fail in ways the ML
+tables above do not name. Check each of these before accepting any "X is associated with Y" claim.
+
+| Threat | What to look for | Decisive check |
+|---|---|---|
+| Claimed construct ≠ dependent variable | Title/abstract promise retention, productivity, quality; the model predicts one patch merged, one bug closed | Is there a variable for the thing in the title? If not, Major by default |
+| Group composition confound | "senior vs junior", "core vs peripheral" contributors compared without controls for tenure, affiliation (employees of the sponsoring company), prior history | Within-person design, or tenure/affiliation covariates, or matching |
+| Selection into the group | Group defined by an outcome (e.g. "junior until first success" makes persistently unsuccessful members dominate the group) | Re-define by time or count, not by outcome; sensitivity analysis |
+| Post-outcome predictors | Review rounds, response delay, discussion length used to predict acceptance, but produced by the review itself | Restrict to pre-submission attributes, or model as mediators |
+| Author / project non-independence | Thousands of patches from a few authors or projects treated as independent | Mixed effects (author, project random intercepts) or clustered SEs |
+| Pooling heterogeneous projects | Hundreds of repositories in one regression, no project effects; "context dependence" reported from per-stratum sign flips | Per-project or hierarchical models; heterogeneity test |
+| Huge-N significance | OR 0.999*** or 1.001***; p-values doing the work of effect sizes | Minimum effect-size threshold; marginal effects per SD; explained deviance per variable |
+| Outcome mislabelled | Unmerged PRs = rejected (many are author-abandoned); merged-outside-PR heuristics with known error rates | Separate abandonment from rejection; report heuristic accuracy |
+| Metric–recommendation mapping | A qualitative recommendation ("clear documentation") operationalised by a proxy (a readability formula) with no validation | Human rating on a sample; convergent validity |
+| Bot and duplicate accounts | Bots inflate counts; one person with several accounts counted as several contributors | Bot filtering and identity merging described and evaluated |
+
+Severity reminders for this family: the first two rows are **Major** whenever they touch the central
+claim, and together they make causal advice from the paper unsupported even when the correlations are
+real. Huge-N significance is **Moderate** when the authors also report effect sizes and **Major** when
+the abstract counts the null effects as findings.

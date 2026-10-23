@@ -47,10 +47,9 @@ python3 -I scripts/paper_meta.py paper.pdf
 python3 -I scripts/paper_meta.py paper.pdf --find "ablation|seed"
 ```
 
-## Example
+## Examples
 
-Prompt: *"Can you review this paper for me? I'm presenting it at our reading group next week
-and want to know how much to trust the claims."* with the DPO paper (arXiv 2305.18290) yields a
-~2,500-word review ending in **Accept / High confidence**, with the Adversary's strongest
-objection being that the real-data evidence (single runs, GPT-4-only dialogue judge, ≤6B) is
-thinner than the theory.
+`examples/` holds two complete reviews produced with this skill: one of a machine-learning method
+paper (verdict Accept) and one of an empirical software-engineering study (verdict Weak Accept, with
+construct- and internal-validity objections that led to a reframed title). Use them to calibrate
+length, labelling, and severity.
